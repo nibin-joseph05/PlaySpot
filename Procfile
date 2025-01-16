@@ -1,1 +1,1 @@
-"web: gunicorn django_Playspot.wsgi" 
+web: gunicorn django_Playspot.wsgi 
