@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = 'django-insecure-_70w*3l8r5kart66p_y0i_28k4x4n*@1v=ttwx2evd+x%%r*s#'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['playspot-vb9l.onrender.com']
 
 # Application definition
 INSTALLED_APPS = [
