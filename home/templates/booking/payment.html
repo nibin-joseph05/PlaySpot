@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Book Turf</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        /* Custom Styles */
+        body {
+            background-color: #f4f7fc;
+            font-family: Arial, sans-serif;
+            background-image: url("{% static 'images/payment.jpg' %}");
+            background-size: cover;
+            background-position: center;
+        }
+        .container {
+            margin-top: 50px;
+            width: 80%;
+            max-width: 800px;
+        }
+        .payment-summary {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #2c3e50;
+        }
+        .payment-button, .cancel-button {
+            width: 100%;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .payment-button:hover {
+            background-color: #218838;
+        }
+        .cancel-button {
+            background-color: #dc3545;
+        }
+        .cancel-button:hover {
+            background-color: #c82333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .payment-form {
+            background-color: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .payment-info {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-radius: 5px;
+            color: #721c24;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="payment-summary">
+                <!-- Payment Information Message -->
+                <div class="payment-info">
+                    <strong>Important:</strong> Currently, only card payments are accepted. Please ensure you have your card details ready.
+                </div>
+
+                <h2>Confirm Payment for Booking: {{ booking.turf.name }}</h2>
+                <p><strong>Booking Date:</strong> {{ booking.booking_date }}</p>
+                <p><strong>Duration:</strong> {{ booking.duration_hours }} hours</p>
+                <p><strong>Total Price:</strong> ₹{{ booking.total_price }}</p>
+
+                <!-- Payment Form -->
+                <div class="payment-form">
+                    <form method="POST" id="payment-form">
+                        {% csrf_token %}
+
+                        <!-- Card Information (Predefined for simplicity) -->
+                        <div class="form-group">
+                            <label for="card-number">Card Number</label>
+                            <input type="text" class="form-control" id="card-number" name="card_number" placeholder="Enter your card number" >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expiry-date">Expiry Date</label>
+                            <input type="text" class="form-control" id="expiry-date" name="expiry_date" placeholder="MM/YY" >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" class="form-control" id="cvv" name="cvv" placeholder="Enter CVV" >
+                        </div>
+
+                        <!-- Payment Button -->
+                        <button type="submit" class="payment-button">Pay Now</button>
+                    </form>
+                </div>
+
+                <!-- Cancel Button -->
+                <form method="POST" action="{% url 'cancel_booking' booking.id %}" onsubmit="return confirm('Are you sure you want to cancel your booking?')">
+                    {% csrf_token %}
+                    <button type="submit" class="cancel-button">Cancel Booking</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

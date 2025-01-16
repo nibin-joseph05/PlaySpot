@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <meta name="csrf-token" content="{% csrf_token %}">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #e9f5e1; /* Light green background */
+            background: url("{% static 'img/loginpage.jpg' %}") no-repeat center center/cover;
+            background-size: cover; /* Make sure the image covers the full screen */
+            background-position: center; /* Center the image */
+            background-attachment: fixed; /* Keep the image fixed when scrolling */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        .chat-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1000px;
+            background-color: rgba(255, 255, 255, 0.9); /* Slight transparency for background */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        /* Left Side: Suggested Questions */
+        .suggestions-container {
+            width: 30%;
+            padding: 15px;
+            background-color: #f4f8f2;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .suggestions h4 {
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .suggestions ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .suggestions ul li {
+            margin-bottom: 12px;
+            font-size: 1rem;
+            color: #333;
+            font-weight: 400;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .suggestions ul li:hover {
+            color: #4CAF50; /* Green hover effect */
+        }
+
+        /* Right Side: Chatbot Interface */
+        .chat-box-container {
+            width: 65%;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header {
+            background-color: #4CAF50; /* Green header */
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 500;
+            border-radius: 8px;
+        }
+
+        .chat-box {
+            height: 250px; /* Reduced height */
+            overflow-y: auto;
+            border-top: 1px solid #ddd;
+            padding: 15px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .message {
+            max-width: 75%;
+            margin: 8px 0;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 1rem;
+            line-height: 1.6;
+            display: inline-block;
+            clear: both;
+        }
+
+        .user-message {
+            background-color: #d1e7ff;
+            text-align: right;
+            margin-left: auto;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .bot-message {
+            background-color: #f1f1f1;
+            text-align: left;
+            margin-right: auto;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-box {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+        }
+
+        .input-box input {
+            width: 80%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            font-size: 1rem;
+        }
+
+        .input-box button {
+            width: 15%;
+            padding: 12px;
+            background-color: #4CAF50; /* Green button */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-button {
+            padding: 6px 10px; /* Reduced padding for a smaller button */
+            font-size: 1rem;
+            color: #fff; /* White text */
+            background-color: #c0cbd7; /* Blue back button */
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block; /* Makes it behave like a button */
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Left Side: Suggested Questions -->
+        <div class="suggestions-container">
+            <div class="suggestions">
+                <h4>Suggested Questions:</h4>
+                <ul>
+                    <li>Good morning</li>
+                    <li>What is the price per hour?</li>
+                    <li>How can I book a turf?</li>
+                    <li>What payment methods do you accept?</li>
+                    <li>What is your refund policy?</li>
+                    <li>Are the turfs indoor or outdoor?</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Side: Chatbot Interface -->
+        <div class="chat-box-container">
+            <div class="chat-header">
+                <h2>FAQ Chatbot</h2>
+            </div>
+        
+            <form method="POST" action="{% url 'faq' %}">
+                {% csrf_token %}
+                <div class="chat-box">
+                    <!-- Chat messages will appear here -->
+                    {% if user_query %}
+                    <div class="message user-message">{{ user_query }}</div>
+                    {% endif %}
+                    {% if answer %}
+                    <div class="message bot-message">{{ answer }}</div>
+                    {% endif %}
+                </div>
+        
+                <div class="input-box">
+                    <input type="text" id="user-query" name="query" placeholder="Ask me anything..." value="{{ user_query }}">
+                    <button type="submit">Send</button>
+                </div>
+            </form>
+        
+            <!-- Back Button -->
+            <div class="back-button">
+                <a href="{% url 'customer' %}">← Back to Home</a>
+            </div>
+        </div>
+        
+    </div>
+</body>
+</html>

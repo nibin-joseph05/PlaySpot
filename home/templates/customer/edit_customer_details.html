@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Customer Details</title>
+    {% load static %}
+    <style>
+        body {
+            background-image: url("{% static 'img/img6.jpg' %}");
+            background-size: cover;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            width: 80%;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding-bottom: 20px;
+        }
+
+        form {
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        td, th {
+            padding: 10px;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        th {
+            width: 30%;
+            font-weight: bold;
+            background-color: #f4f4f4;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea,
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px; /* Add space between the buttons */
+        }
+
+        .current-photo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .current-photo img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+        }
+
+        .current-photo p {
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+        }
+    
+        .alert {
+            padding: 10px;
+            background-color: #4CAF50; /* Green background for success */
+            color: white;
+            text-align: center;
+            margin: 20px auto;
+            border-radius: 5px;
+            width: 80%; /* Adjust width as needed */
+            max-width: 600px; /* Optionally limit the width */
+            box-sizing: border-box; /* Ensure padding is included in the width calculation */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Your Details</h2>
+
+        <!-- Display success message if any -->
+        {% if messages %}
+            <div class="alert">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'edit_customer_details' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Photo Upload -->
+            <div class="current-photo">
+                {% if customer.photo %}
+                    <img src="{{ customer.photo.url }}" alt="Current Photo">
+                {% else %}
+                    <p>No photo uploaded</p>
+                {% endif %}
+            </div>
+            <table>
+                <tr>
+                    <th><label for="photo">Change Photo (Optional)</label></th>
+                    <td><input type="file" id="photo" name="photo" ></td>
+                </tr>
+
+                <!-- Other fields like First Name, Last Name, etc. -->
+                <tr>
+                    <th><label for="first_name">First Name</label></th>
+                    <td><input type="text" id="first_name" name="first_name" value="{{ customer.first_name }}" required></td>
+                </tr>
+                
+                <tr>
+                    <th><label for="middle_name">Middle Name</label></th>
+                    <td><input type="text" id="middle_name" name="middle_name" value="{{ customer.middle_name }}"></td>
+                </tr>
+
+                <tr>
+                    <th><label for="last_name">Last Name</label></th>
+                    <td><input type="text" id="last_name" name="last_name" value="{{ customer.last_name }}" required></td>
+                </tr>
+
+                <tr>
+                    <th><label for="address">Address</label></th>
+                    <td><input type="text" id="address" name="address" value="{{ customer.address }}" required></td>
+                </tr>
+
+                <tr>
+                    <th><label for="phone_number">Phone Number</label></th>
+                    <td><input type="text" id="phone_number" name="phone_number" value="{{ customer.phone_number }}" required></td>
+                </tr>
+
+                <tr>
+                    <th><label for="email">Email</label></th>
+                    <td><input type="email" id="email" name="email" value="{{ customer.email }}" required></td>
+                </tr>
+
+                <tr>
+                    <th><label for="gender">Gender</label></th>
+                    <td>
+                        <select id="gender" name="gender" required>
+                            <option value="Male" {% if customer.gender == 'Male' %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if customer.gender == 'Female' %}selected{% endif %}>Female</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            
+            <div class="button-container">
+                <button type="submit" class="button">Save Changes</button>
+                <a href="{% url 'customer_details' %}" class="button">Back</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

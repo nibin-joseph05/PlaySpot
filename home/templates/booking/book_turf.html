@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Turf</title>
+
+    <!-- Load Static Files -->
+    {% load static %}
+
+    <!-- Optional: FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url('{% static "images/img4.jpg" %}');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .form-container p {
+            font-size: 16px;
+            color: #34495e;
+            margin-bottom: 12px;
+        }
+
+        .form-container strong {
+            color: #3498db;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .form-container input, .form-container select, .form-container textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            background-color: #f9f9f9;
+        }
+
+        .form-container input:focus, .form-container select:focus, .form-container textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .cancel-button {
+            background-color: #e74c3c;
+            margin-top: 15px;
+            width: 100%;
+            max-width: 300px;
+            padding: 14px 30px;
+            font-size: 18px;
+            text-transform: uppercase;
+            color: white;
+            border-radius: 30px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .cancel-button:hover {
+            background-color: #c0392b;
+            transform: translateY(-3px);
+        }
+
+        .cancel-button:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .info-message {
+            font-size: 14px;
+            color: #3498db;
+            margin-top: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            button, .cancel-button {
+                width: 100%;
+            }
+        }
+        .error-message {
+    color: #e74c3c;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px;
+    border: 1px solid #e74c3c;
+    background-color: #fce4e4;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+    </style>
+</head>
+
+<body>
+    
+
+<div class="container">
+    {% if messages %}
+    <div class="error-message" style="display: block;">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <h2>Book Turf: {{ turf.name }}</h2>
+
+    <!-- Booking Form -->
+    <form method="POST" class="form-container" onsubmit="return validateForm()">
+        {% csrf_token %}
+ 
+        <!-- Date Picker -->
+        <label for="booking_date">Required Date:</label>
+        <input type="date" id="booking_date" name="booking_date" required>
+
+        <!-- Time Picker (Hours Only) -->
+        <label for="booking_time">Booking Time:</label>
+        <input type="time" id="booking_time" name="booking_time" step="3600" required>
+        
+        <!-- Display Turf Start and End Time -->
+        <p class="info-message">Available time: {{ turf.timing_start }} - {{ turf.timing_end }}</p>
+
+        <!-- Duration of Hours -->
+        <label for="duration_hours">Duration (hours):</label>
+        <select id="duration_hours" name="duration_hours" onchange="updatePrice()" required>
+            <option value="1">1 Hour</option>
+            <option value="2">2 Hours</option>
+            <option value="3">3 Hours</option>
+            <option value="4">4 Hours</option>
+            <option value="5">5 Hours</option>
+        </select>
+        <p class="info-message">You can select up to 5 hours.</p>
+
+        <!-- Display Price -->
+        <p><strong>Price Per Hour:</strong> ₹{{ turf.price_per_hour }}</p>
+        <p><strong>Total Price:</strong> ₹<span id="total_price">{{ turf.price_per_hour }}</span></p>
+
+        <div class="details">
+            <p><strong>Location:</strong> {{ turf.location }}</p>
+        </div>
+
+        <button type="submit">Confirm Booking</button>
+
+        <!-- Cancel Button -->
+        <button type="button" class="cancel-button" onclick="confirmCancel()">Cancel Booking</button>
+
+        <!-- Error Message for Invalid Duration -->
+        <div id="error-message" class="error-message" style="display: none;">The duration cannot exceed 5 hours. Please select a valid duration.</div>
+    </form>
+</div>
+
+<script>
+    // Function to update the total price based on selected duration
+    function updatePrice() {
+        const pricePerHour = {{ turf.price_per_hour }};
+        const duration = document.getElementById("duration_hours").value;
+        const totalPrice = pricePerHour * duration;
+        document.getElementById("total_price").textContent = totalPrice;
+    }
+
+    // Initialize the total price on page load
+    window.onload = function() {
+        updatePrice();
+        setAvailableTimeRange();
+    };
+
+    // Function to handle cancel action
+    function confirmCancel() {
+        const userConfirmation = confirm("Are you sure you want to cancel the booking?");
+        if (userConfirmation) {
+            window.location.href = "{% url 'customer' %}";  // Redirect to the customer page (update URL if needed)
+        }
+    }
+
+    // Form validation to ensure duration is <= 5 hours and time is within range
+    function validateForm() {
+        const bookingTime = document.getElementById("booking_time").value;
+        const duration = document.getElementById("duration_hours").value;
+        const errorMessage = document.getElementById("error-message");
+
+        // Turf start and end times, passed from Django
+        const startTime = "{{ turf.timing_start }}";
+        const endTime = "{{ turf.timing_end }}";
+
+        // Convert bookingTime, startTime, and endTime to Date objects for comparison
+        const bookingDate = new Date(`1970-01-01T${bookingTime}:00`);
+        const startDate = new Date(`1970-01-01T${startTime}:00`);
+        const endDate = new Date(`1970-01-01T${endTime}:00`);
+
+        // Check if the booking time is within the available time range
+        if (bookingDate < startDate || bookingDate >= endDate) {
+            alert("Invalid time selected. Please choose a time between " + startTime + " and " + endTime);
+            return false;
+        }
+
+        // Check if duration is within the allowed range
+        if (duration > 5) {
+            errorMessage.style.display = "block";
+            return false;
+        } else {
+            errorMessage.style.display = "none";
+        }
+        return true;
+    }
+
+    // Set the available time range based on turf's start and end time
+    function setAvailableTimeRange() {
+        const startTime = "{{ turf.timing_start }}";
+        const endTime = "{{ turf.timing_end }}";
+
+        // Set the min and max time for the time input
+        const timeInput = document.getElementById("booking_time");
+        timeInput.setAttribute("min", startTime);
+        timeInput.setAttribute("max", endTime);
+    }
+    
+    // Set the minimum date to today's date for the Required Date field
+    document.addEventListener("DOMContentLoaded", function() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+        const day = String(today.getDate()).padStart(2, '0');
+        const minDate = `${year}-${month}-${day}`;
+
+        // Set the min attribute to today for the date input
+        document.getElementById("booking_date").setAttribute("min", minDate);
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback List</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/admin_feedback.css' %}">
+    <style>
+        /* Improved admin_feedback.css with better text visibility */
+
+        /* Set a background image with a gradient overlay */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url("{% static 'img/img6.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 1200px;
+            overflow-x: auto;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 1rem;
+            background-color: #fff; /* Set the background of the table to white for contrast */
+            color: #333; /* Default text color */
+        }
+
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .table td {
+            background-color: #fff; /* White background for table data */
+            color: #333; /* Dark text for better contrast */
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f9f9f9; /* Alternating row colors for better readability */
+        }
+
+        .table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-back {
+            background-color: #007bff;
+        }
+
+        .btn-back:hover {
+            background-color: #0056b3;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .select-all {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+        }
+
+        .select-all input {
+            margin-right: 10px;
+        }
+
+        /* Center buttons inside the container */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    
+
+        .star {
+            color: #FFD700;
+            font-size: 1.2rem;
+        }
+
+        .star-grey {
+            color: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Feedback List</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="select-all">
+                <input type="checkbox" id="select_all" /> <label for="select_all">Select All Feedbacks</label>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="select_all" /></th>
+                        <th>Customer</th>
+                        <th>Turf</th>
+                        <th>Rating</th>
+                        <th>Feedback Type</th>
+                        <th>Comments</th>
+                        <th>Date of Visit</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feedback in feedbacks %}
+                        <tr>
+                            <td><input type="checkbox" name="feedback_ids" value="{{ feedback.id }}" /></td>
+                            <td>{{ feedback.customer.first_name }} {{ feedback.customer.last_name }}</td>
+                            <td>{{ feedback.turf.name }}</td>
+                            <td>
+                                <div class="rating">
+                                    {% with 5 as total_stars %}
+                                        {% for i in "12345"|slice:":total_stars"|make_list %}
+                                            <span class="{% if forloop.counter <= feedback.rating %}fas fa-star{% else %}far fa-star star-grey{% endif %}"></span>
+                                        {% endfor %}
+                                    {% endwith %}
+                                </div>
+                            </td>
+                            <td>{{ feedback.feedback_type }}</td>
+                            <td>{{ feedback.comments }}</td>
+                            <td>{{ feedback.date_of_visit }}</td>
+                            <td>
+                                {% if feedback.status == 'pending' %}
+                                    <span style="color: orange;">Pending</span>
+                                {% else %}
+                                    <span style="color: green;">Reviewed</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="8">No feedbacks available.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Center buttons inside the container -->
+            <div class="button-container">
+                <button type="submit" class="btn btn-success">Mark as Reviewed</button>
+                <a href="{% url 'admin01' %}" class="btn btn-back">Back to Admin</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Add script to handle the "select all" checkbox
+        document.getElementById('select_all').addEventListener('change', function () {
+            let checkboxes = document.querySelectorAll('input[name="feedback_ids"]');
+            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        });
+    </script>
+
+</body>
+</html>

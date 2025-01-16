@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Payment Summary</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Admin Payment Summary</h2>
+        <hr>
+        <div class="mb-3">
+            <a href="{% url 'admin01' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+        <!-- Filter Section -->
+        <form method="get" action="" class="mb-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <select name="payment_status" class="form-control">
+                        <option value="">All Payment Status</option>
+                        <option value="paid" {% if request.GET.payment_status == 'paid' %}selected{% endif %}>Paid</option>
+                        <option value="pending" {% if request.GET.payment_status == 'pending' %}selected{% endif %}>Pending</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select name="status" class="form-control">
+                        <option value="">All Booking Status</option>
+                        <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
+                        <option value="canceled" {% if request.GET.status == 'canceled' %}selected{% endif %}>Canceled</option>
+                        <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-filter"></i> Apply Filters
+                    </button>
+                </div>
+            </div>
+        </form>
+    
+        <!-- Payment Summary Cards -->
+        <div class="row text-center mb-4">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5>Total Profit</h5>
+                        <h3 class="text-success">₹{{ total_paid }}</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5>Pending Payments</h5>
+                        <h3 class="text-warning">₹{{ pending_payments }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Booking Table -->
+        <div class="table-responsive">
+            <h4>Booking Payment Details</h4>
+            <table class="table table-bordered table-striped mt-3">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Customer Name</th>
+                        <th>Turf Name</th>
+                        <th>Booking Date</th>
+                        <th>Duration (hrs)</th>
+                        <th>Total Price</th>
+                        <th>Payment Status</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ booking.customer.first_name }} {{ booking.customer.last_name }}</td>
+                        <td>{{ booking.turf.name }}</td>
+                        <td>{{ booking.booking_date }}</td>
+                        <td>{{ booking.duration_hours }}</td>
+                        <td>₹{{ booking.total_price }}</td>
+                        <td>
+                            {% if booking.payment_status == 'paid' %}
+                            <span class="badge badge-success">Paid</span>
+                            {% else %}
+                            <span class="badge badge-warning">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if booking.status == 'approved' %}
+                            <span class="badge badge-primary">Approved</span>
+                            {% elif booking.status == 'canceled' %}
+                            <span class="badge badge-danger">Canceled</span>
+                            {% elif booking.status == 'pending' %}
+                            <span class="badge badge-secondary">Pending</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">No bookings available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    
+        <!-- Pagination Controls -->
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if bookings.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.payment_status %}payment_status={{ request.GET.payment_status }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}page={{ bookings.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% for num in bookings.paginator.page_range %}
+                <li class="page-item {% if bookings.number == num %}active{% endif %}">
+                    <a class="page-link" href="?{% if request.GET.payment_status %}payment_status={{ request.GET.payment_status }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}page={{ num }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                {% if bookings.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if request.GET.payment_status %}payment_status={{ request.GET.payment_status }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}page={{ bookings.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    
+</body>
+</html>

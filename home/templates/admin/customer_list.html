@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+    {% load static %}
+    <style>
+        body {
+            background-image: url('{% static "img/img2.jpg" %}');
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-repeat: no-repeat;
+            background-size: cover;
+            color: #a84141;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            background-image: url('{% static "img/fb1.jpg" %}');
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(228, 226, 226, 0.5);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #c3cdc7;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+
+        th {
+            background-color: #3498db;
+            color: #1e1b1b;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        td:first-child, th:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+            color: #1e1b1b;
+        }
+
+        td:last-child, th:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+            color: #1e1b1b;
+        }
+
+        @media (max-width: 768px) {
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+                color: #1e1b1b;
+            }
+        }
+
+        .back-button {
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 5px;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #45a049;
+        }
+
+        .delete-button {
+            padding: 5px 10px;
+            background-color: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-button:hover {
+            background-color: #c0392b;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+        }
+        .delete-button:disabled {
+            background-color: #d3d3d3;
+            cursor: not-allowed;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 style="text-align: center;">User Details</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Gender</th>
+                <th>Contact</th>
+                <th>Address</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+                <tr>
+                    <td>{{ customer.id }}</td>
+                    <td>{{ customer.first_name }}</td>
+                    <td>{{ customer.last_name }}</td>
+                    <td>{{ customer.gender }}</td>
+                    <td>{{ customer.phone_number }}</td>
+                    <td>{{ customer.address }}</td>
+                    <td>{{ customer.email }}</td>
+                    <td>
+                        {% if customer.id != 3 %}
+                            <form action="{% url 'customer_delete' customer.id %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="delete-button">Delete</button>
+                            </form>
+                        {% else %}
+                            <button type="button" class="delete-button" disabled>Cannot Delete</button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        
+    </table>
+
+    <div class="button-container">
+        <a href="{% url 'admin01' %}" class="back-button">Back to Admin</a>
+
+    </div>
+</div>
+
+</body>
+</html>

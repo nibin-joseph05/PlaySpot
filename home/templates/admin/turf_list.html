@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Football Turfs</title>
+    {% load static %}
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url("{% static 'img/turf6.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 1300px;
+            overflow-x: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 30px;
+            font-size: 3rem;
+            font-weight: 700;
+            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.6);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-weight: 500;
+        }
+
+        th {
+            background-color: #1d2d50;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 1.2rem;
+        }
+
+        td img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .price-rating {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price-rating span {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .back-button {
+            display: block;
+            margin-top: 30px;
+            padding: 15px 25px;
+            text-align: center;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .back-button:hover {
+            background-color: #218838;
+        }
+
+        .btn-detail {
+            display: inline-block;
+            padding: 10px 15px;
+            text-align: center;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            font-weight: bold;
+        }
+
+        .btn-detail:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        tr:nth-child(even) {
+            background-color: #f4f6f9;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #fff;
+        }
+
+        .empty-message {
+            text-align: center;
+            font-size: 1.3rem;
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            table {
+                font-size: 1rem;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+
+        /* Add a football-style border to the table */
+        table, th, td {
+            border: 2px solid #2e3b47;
+        }
+
+        th, td {
+            border-radius: 8px;
+        }
+
+        /* Football button styles */
+        .btn-detail {
+            background-color: #fd6f5f; /* A sporty red */
+            border-radius: 50px;
+            padding: 12px 20px;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .btn-detail:hover {
+            background-color: #e85d5d;
+        }
+
+        /* Red Delete Button */
+        .btn-danger {
+            background-color: #dc3545; /* Red */
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333; /* Darker red on hover */
+        }
+
+        /* Blue Edit Button */
+        .edit-button {
+            background-color: #007bff; /* Blue */
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .edit-button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Available Football Turfs</h1>
+
+    <!-- Table for displaying turfs -->
+    <table>
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Turf Type</th>
+                <th>Location</th>
+                <th>Description</th>
+                <th>Price (₹)</th>
+                <th>Available</th>
+                <th>Turf Timing</th>
+                <th>Ratings</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for turf in turfs %}
+            <tr>
+                <td>
+                    {% if turf.image %}
+                        <img src="{{ turf.image.url }}" alt="{{ turf.name }}" class="turf-image">
+                    {% else %}
+                        <div style="background-color: #ccc; width: 100px; height: 100px; border-radius: 8px;"></div>
+                    {% endif %}
+                </td>
+                <td>{{ turf.name }}</td>
+                <td>{{ turf.turf_type }}</td>
+                <td>{{ turf.location }}</td>
+                <td>{{ turf.description }}</td>
+                <td>{{ turf.price_per_hour }}</td>
+                <td>
+                    {% if turf.is_available %}
+                        No
+                    {% else %}
+                        Yes
+                    {% endif %}
+                </td>
+                <td>{{ turf.timing_start }} - {{ turf.timing_end }}</td>
+                <td>{{ turf.rating }}</td>
+                <td>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <!-- Delete Button -->
+                        <a href="{% url 'delete_turf' turf.id %}" class="btn btn-danger">Delete</a>
+                        <!-- Edit Button -->
+                        <a href="{% url 'edit_turf' turf.id %}" class="btn edit-button">Edit Turf</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="10" class="empty-message">No turfs available at the moment.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'admin01' %}" class="back-button">Back to Admin</a>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Additional JS functionality, if needed
+});
+</script>
+
+</body>
+</html>

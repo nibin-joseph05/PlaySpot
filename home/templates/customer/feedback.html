@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Feedback for {{ turf.name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("{% static 'images/new_turf.jpg' %}"); /* Path to background image */
+            background-size: cover;
+            background-position: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); /* Transparent white background for readability */
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-group select,
+        .form-group textarea,
+        .form-group input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        .rating {
+            direction: rtl;
+            display: flex;
+            justify-content: center; /* Center stars horizontally */
+            margin-bottom: 10px;
+        }
+
+        .rating input {
+            display: none;
+        }
+
+        .rating label {
+            font-size: 50px; /* Increased size of stars */
+            color: yellow; /* Default star color */
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .rating input:checked ~ label {
+            color: orange; /* Color when star is clicked */
+        }
+
+        .rating input:hover ~ label,
+        .rating label:hover {
+            color: orange; /* Hover color for stars */
+        }
+
+        .button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .review-section {
+            margin-top: 40px;
+        }
+
+        .review-section h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .review {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .review .customer-info {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .review .rating {
+            font-size: 20px;
+            color: gold;
+            margin-bottom: 10px;
+        }
+
+        .review p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .review .feedback-type {
+            font-style: italic;
+            color: #777;
+        }
+
+        .review .date {
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* Back button styling */
+        .back-button {
+            margin-top: 20px;
+            display: block;
+            width: 120px;
+            padding: 10px;
+            text-align: center;
+            background-color: #f0f0f0;
+            color: #007bff;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Feedback for {{ turf.name }}</h1>
+        {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <p class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="rating">Rating:</label>
+                <div class="rating">
+                    <input type="radio" id="star5" name="rating" value="5" required><label for="star5">&#9733;</label>
+                    <input type="radio" id="star4" name="rating" value="4"><label for="star4">&#9733;</label>
+                    <input type="radio" id="star3" name="rating" value="3"><label for="star3">&#9733;</label>
+                    <input type="radio" id="star2" name="rating" value="2"><label for="star2">&#9733;</label>
+                    <input type="radio" id="star1" name="rating" value="1"><label for="star1">&#9733;</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="comments">Comments:</label>
+                <textarea name="comments" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="booking_approved_date">Date Visited:</label>
+                <input type="date" name="date_of_visit" value="{{ booking.booking_date|date:"Y-m-d" }}" required readonly>
+            </div>
+            
+
+            <div class="form-group">
+                <label for="feedback_type">Feedback Type:</label>
+                <select name="feedback_type">
+                    <option value="complaint">Complaint</option>
+                    <option value="suggestion">Suggestion</option>
+                    <option value="praise">Praise</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="button">Submit Feedback</button>
+            </div>
+        </form>
+
+    <a href="javascript:history.back()" class="back-button">Go Back</a>
+        <div class="review-section">
+            <h2>Customer Reviews:</h2>
+            {% for feedback in turf.feedbacks.all %}
+                <div class="review">
+                    <div class="customer-info">
+                        {{ feedback.customer.first_name }} {{ feedback.customer.last_name }}
+                    </div>
+                    <div class="rating">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= feedback.rating %}
+                                &#9733;
+                            {% else %}
+                                &#9734;
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <p>{{ feedback.comments }}</p>
+                    <p class="feedback-type">{{ feedback.feedback_type }}</p>
+                    <p class="date">Date of visit: {{ feedback.date_of_visit }}</p>
+                </div>
+            {% empty %}
+                <p>No feedback yet. Be the first to submit feedback!</p>
+            {% endfor %}
+        </div>
+
+        
+    </div>
+
+</body>
+</html>

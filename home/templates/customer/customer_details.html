@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Details</title>
+    {% load static %}
+    <style>
+        body {
+            background-image: url("{% static 'img/img6.jpg' %}");
+            background-size: cover;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            width: 80%;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding-bottom: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 80%;
+            max-height: 80%;
+            position: relative;
+        }
+
+        .modal-img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 10px;
+        }
+
+        .cancel-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 16px;
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #333;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .view-photo-link {
+            text-align: center;
+            margin-top: 10px;
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Customer Details</h2>
+        {% if messages %}
+        <div class="error-message" style="display: block;">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+        </div>
+        {% endif %}
+        <table>
+            <!-- Display user's photo as the first row in the table -->
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    {% if customer.photo %}
+                        <img src="{{ customer.photo.url }}" alt="Customer Photo" style="width: 100px; height: 100px; border-radius: 50%; margin-bottom: 10px;" onclick="openModal()">
+                    {% else %}
+                        {% if customer.gender == 'Male' %}
+                            <img src="{% static 'img/male.jpeg' %}" alt="Default Male Photo" style="width: 100px; height: 100px; border-radius: 50%; margin-bottom: 10px;" onclick="openModal()">
+                        {% elif customer.gender == 'Female' %}
+                            <img src="{% static 'img/female.jpeg' %}" alt="Default Female Photo" style="width: 100px; height: 100px; border-radius: 50%; margin-bottom: 10px;" onclick="openModal()">
+                        {% else %}
+                            <img src="{% static 'img/other.jpeg' %}" alt="Default Photo" style="width: 100px; height: 100px; border-radius: 50%; margin-bottom: 10px;" onclick="openModal()">
+                        {% endif %}
+                    {% endif %}
+                    <div class="view-photo-link" onclick="openModal()">View Photo</div>
+                </td>
+            </tr>
+            
+            <tbody>
+                <tr>
+                    <td>ID</td>
+                    <td>{{ customer.id }}</td>
+                </tr>
+                <tr>
+                    <td>First Name</td>
+                    <td>{{ customer.first_name }}</td>
+                </tr>
+                <tr>
+                    <td>Middle Name</td>
+                    <td>{{ customer.middle_name }}</td>
+                </tr>
+                <tr>
+                    <td>Last Name</td>
+                    <td>{{ customer.last_name }}</td>
+                </tr>
+                <tr>
+                    <td>Address</td>
+                    <td>{{ customer.address }}</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>{{ customer.email }}</td>
+                </tr>
+                <tr>
+                    <td>Contact</td>
+                    <td>{{ customer.phone_number }}</td>
+                </tr>
+                <tr>
+                    <td>Gender</td>
+                    <td>{{ customer.gender }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="button-container">
+            <a href="{% url 'edit_customer_details' %}" class="button">Edit Your Details</a>
+            <a href="{% url 'update_password' %}" class="button">Change Password</a>
+            <a href="{% url 'customer' %}" class="button">Back</a>
+
+        </div>
+    </div>
+
+    <!-- Modal for displaying the larger image -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <button class="cancel-button" onclick="closeModal()">Cancel</button>
+            {% if customer.photo %}
+                <img src="{{ customer.photo.url }}" class="modal-img" alt="Customer Photo">
+            {% else %}
+                {% if customer.gender == 'Male' %}
+                    <img src="{% static 'img/male.jpeg' %}" class="modal-img" alt="Default Male Photo">
+                {% elif customer.gender == 'Female' %}
+                    <img src="{% static 'img/female.jpeg' %}" class="modal-img" alt="Default Female Photo">
+                {% else %}
+                    <img src="{% static 'img/other.jpeg' %}" class="modal-img" alt="Default Photo">
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>

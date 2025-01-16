@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking List</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+      background-image: url("{% static 'img/img6.jpg' %}");
+
+      font-family: 'Arial', sans-serif;
+      color: #495057;
+    }
+
+    .container {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #343a40;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+      padding: 12px 15px;
+    }
+
+    td {
+      padding: 12px 15px;
+      vertical-align: middle;
+      border-top: 1px solid #e9ecef;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    .badge {
+      font-size: 0.85rem;
+    }
+
+    .badge-primary {
+      background-color: #007bff;
+    }
+
+    .badge-danger {
+      background-color: #dc3545;
+    }
+
+    .badge-warning {
+      background-color: #ffc107;
+    }
+
+    .badge-success {
+      background-color: #28a745;
+    }
+
+    .btn {
+      font-size: 0.9rem;
+      padding: 8px 12px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-info {
+      background-color: #17a2b8;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background-color: #138496;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    .no-bookings {
+      text-align: center;
+      font-size: 16px;
+      color: #6c757d;
+    }
+
+    .back-btn-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-btn-container a {
+      font-size: 1rem;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+
+    .back-btn-container a:hover {
+      background-color: #0056b3;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <h2>Booking List</h2>
+    <div class="mb-3">
+      <a href="{% url 'admin01' %}" class="btn btn-secondary">
+          <i class="fas fa-arrow-left"></i> Back
+      </a>
+  </div>
+    <!-- Filter Form -->
+    <form method="get" class="mb-4">
+      <div class="form-row">
+        <div class="col-md-3">
+          <label for="status">Status</label>
+          <select name="status" class="form-control">
+            <option value="">All</option>
+            <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+            <option value="approved" {% if request.GET.status == 'approved' %}selected{% endif %}>Approved</option>
+            <option value="canceled" {% if request.GET.status == 'canceled' %}selected{% endif %}>Canceled</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="payment_status">Payment Status</label>
+          <select name="payment_status" class="form-control">
+            <option value="">All</option>
+            <option value="pending" {% if request.GET.payment_status == 'pending' %}selected{% endif %}>Pending</option>
+            <option value="paid" {% if request.GET.payment_status == 'paid' %}selected{% endif %}>Paid</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="turf">Turf</label>
+          <input type="text" name="turf" class="form-control" value="{{ request.GET.turf }}">
+        </div>
+        <div class="col-md-3">
+          <label for="customer">Customer</label>
+          <input type="text" name="customer" class="form-control" value="{{ request.GET.customer }}">
+        </div>
+        <div class="col-md-12 mt-3">
+          <button type="submit" class="btn btn-primary">Apply Filters</button>
+        </div>
+      </div>
+    </form>
+
+    {% if page_obj.object_list %}
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Customer Name</th>
+            <th>Turf Name</th>
+            <th>Booking Date</th>
+            <th>Booking Time</th>
+            <th>Duration</th>
+            <th>Total Price</th>
+            <th>Status</th>
+            <th>Payment Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for booking in page_obj %}
+            <tr>
+              <td>{{ booking.customer.first_name }} {{ booking.customer.last_name }}</td>
+              <td>{{ booking.turf.name }}</td>
+              <td>{{ booking.booking_date }}</td>
+              <td>{{ booking.booking_time }}</td>
+              <td>{{ booking.duration_hours }} hour(s)</td>
+              <td>{{ booking.total_price }} RS</td>
+              <td>
+                {% if booking.status == 'pending' %}
+                  <span class="badge badge-primary">pending</span>
+                {% elif booking.status == 'canceled' %}
+                  <span class="badge badge-danger">Canceled</span>
+                {% elif booking.status == 'approved' %}
+                  <span class="badge badge-success">approved</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if booking.payment_status == 'pending' %}
+                  <span class="badge badge-warning">Pending</span>
+                {% elif booking.payment_status == 'paid' %}
+                  <span class="badge badge-success">Paid</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if booking.status == 'pending' %}
+                  <a href="{% url 'update_status' booking.id 'approved' %}" class="btn btn-info">Approve</a>
+                  <a href="{% url 'update_status' booking.id 'canceled' %}" class="btn btn-danger">Cancel</a>
+                {% endif %}
+                <a href="{% url 'view_booking' booking.id %}" class="btn btn-primary">View</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Pagination Controls -->
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page=1{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.payment_status %}&payment_status={{ request.GET.payment_status }}{% endif %}{% if request.GET.turf %}&turf={{ request.GET.turf }}{% endif %}{% if request.GET.customer %}&customer={{ request.GET.customer }}{% endif %}" aria-label="First">
+                <span aria-hidden="true">&laquo;&laquo;</span>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.payment_status %}&payment_status={{ request.GET.payment_status }}{% endif %}{% if request.GET.turf %}&turf={{ request.GET.turf }}{% endif %}{% if request.GET.customer %}&customer={{ request.GET.customer }}{% endif %}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+          {% endif %}
+
+          <li class="page-item active">
+            <span class="page-link">{{ page_obj.number }}</span>
+          </li>
+
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.payment_status %}&payment_status={{ request.GET.payment_status }}{% endif %}{% if request.GET.turf %}&turf={{ request.GET.turf }}{% endif %}{% if request.GET.customer %}&customer={{ request.GET.customer }}{% endif %}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.payment_status %}&payment_status={{ request.GET.payment_status }}{% endif %}{% if request.GET.turf %}&turf={{ request.GET.turf }}{% endif %}{% if request.GET.customer %}&customer={{ request.GET.customer }}{% endif %}" aria-label="Last">
+                <span aria-hidden="true">&raquo;&raquo;</span>
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+
+    {% else %}
+      <p class="no-bookings">No bookings found.</p>
+    {% endif %}
+  </div>
+</body>
+</html>

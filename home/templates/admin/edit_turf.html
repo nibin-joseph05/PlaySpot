@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Turf</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <style>
+        /* Your existing styles */
+        body {
+            background-image: url("{% static 'img/img2.jpg' %}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 30px auto;
+            background-color: rgba(12, 225, 186, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: black;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+            color: black;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #000;
+        }
+
+        .button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        .back-button {
+            text-align: center;
+            margin-top: 15px;
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .back-button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Edit Turf</h1>
+
+    <form action="{% url 'edit_turf' turf.id %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Turf Name and Location -->
+        <label for="name">Turf Name:</label>
+        <input type="text" id="name" name="name" value="{{ turf.name }}" required>
+
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" value="{{ turf.location }}" required>
+
+        <label for="pricePerHour">Price Per Hour:</label>
+        <input type="number" id="pricePerHour" name="price_per_hour" step="0.01" value="{{ turf.price_per_hour }}" required>
+
+        <label for="turfType">Turf Type:</label>
+        <select id="turfType" name="turf_type" required>
+            <option value="Natural Grass" {% if turf.turf_type == "Natural Grass" %}selected{% endif %}>Natural Grass</option>
+            <option value="Artificial Grass" {% if turf.turf_type == "Artificial Grass" %}selected{% endif %}>Artificial Grass</option>
+        </select>
+
+        <!-- New Description Field -->
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4">{{ turf.description }}</textarea>
+
+        <!-- Image Upload -->
+        <label for="imageFile">Upload Turf Image:</label>
+        <input type="file" id="imageFile" name="image" accept="image/*">
+        {% if turf.image %}
+            <p>Current image: <img src="{{ turf.image.url }}" alt="Current Turf Image" width="100"></p>
+        {% endif %}
+
+        <!-- Timing -->
+        <label for="timingStart">Turf Opens At:</label>
+        <input type="text" id="timingStart" name="timing_start" value="{{ turf.timing_start }}" required>
+
+        <label for="timingEnd">Turf Closes At:</label>
+        <input type="text" id="timingEnd" name="timing_end" value="{{ turf.timing_end }}" required>
+
+        <!-- Availability -->
+        <label>
+            <input type="checkbox" id="isAvailable" name="is_available" {% if turf.is_available %}checked{% endif %}>
+            Available
+        </label>
+
+        <button type="submit" class="button">Update Turf</button>
+    </form>
+
+    <a href="{% url 'turf_list' %}" class="back-button">Go Back?</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    // Initialize flatpickr for time inputs
+    flatpickr("#timingStart", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+    });
+    flatpickr("#timingEnd", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+    });
+</script>
+
+</body>
+</html>

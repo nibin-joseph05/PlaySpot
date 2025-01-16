@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Bookings</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'user/css/styles.css' %}"> <!-- External stylesheet -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet"> <!-- Google Font -->
+
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url("{% static 'images/new_turf.jpg' %}"); /* Replace with your background image URL */
+            background-size: cover;
+            background-position: center;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent background for readability */
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: 600;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f1f1f1;
+        }
+
+        tr:hover {
+            background-color: #e9f1fb;
+        }
+
+        .download-btn, .cancel-btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .download-btn {
+            background-color: #28a745;
+        }
+
+        .download-btn:hover {
+            background-color: #218838;
+        }
+
+        .cancel-btn {
+            background-color: #dc3545;
+        }
+
+        .cancel-btn:hover {
+            background-color: #c82333;
+        }
+
+        .download-icon {
+            font-size: 18px;
+            margin-left: 8px;
+        }
+
+        .empty-message {
+            text-align: center;
+            font-style: italic;
+            color: #888;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 30px;
+            width: 50%;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-button.confirm {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .modal-button.confirm:hover {
+            background-color: #c82333;
+        }
+
+        .modal-button.cancel {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .modal-button.cancel:hover {
+            background-color: #5a6268;
+        }
+
+        /* Modal Fade-in Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .back-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .back-btn:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome, {{ customer.first_name }}!</h1>
+        <h2>Your Bookings</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Turf</th>
+                    <th>Booking Date</th>
+                    <th>Booking Time</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                    <th>Payment Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.turf.name }}</td>
+                        <td>{{ booking.booking_date }}</td>
+                        <td>{{ booking.booking_time }}</td>
+                        <td>{{ booking.duration_hours }} hours</td>
+                        <td>{{ booking.status }}</td>
+                        <td>{{ booking.payment_status }}</td>
+                        <td>
+                            {% if booking.status == 'approved' %}
+                                <a href="{% url 'download_receipt' booking.id %}" class="download-btn">
+                                    Download Receipt
+                                </a>
+                                <a href="{% url 'feedback' turf_id=booking.turf.id %}" class="download-btn">Give Feedback</a>
+                                <button onclick="showModal({{ booking.id }})" class="cancel-btn">Cancel</button>
+
+
+                            {% elif booking.status == 'canceled' and booking.payment_status == 'paid' %}
+                                <span>Your money will be refunded shortly.</span>
+                            {% elif booking.status == 'pending' and booking.payment_status == 'paid' %}
+                                <span>Your Booking is Done.Please wait for Admin Approval</span>
+                            {% else %}
+                                <span>No actions available</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="empty-message">You have no bookings yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{% url 'customer' %}" class="back-btn">Back to Home</a>
+
+        <!-- Modal for cancel confirmation -->
+        <div id="cancelModal" class="modal">
+            <div class="modal-content">
+                <h3>Are you sure you want to cancel this booking?</h3>
+                <form action="" method="post" id="cancelForm" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="modal-button confirm">Yes, Cancel</button>
+                    <button type="button" class="modal-button cancel" onclick="closeModal()">No, Keep It</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to show modal
+        function showModal(bookingId) {
+            const modal = document.getElementById('cancelModal');
+            const cancelForm = document.getElementById('cancelForm');
+            cancelForm.action = "{% url 'customer_cancel_booking' 0 %}".replace("0", bookingId);
+            modal.style.display = "block";
+        }
+
+        // Function to close modal
+        function closeModal() {
+            const modal = document.getElementById('cancelModal');
+            modal.style.display = "none";
+        }
+
+        // Close modal when clicked outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('cancelModal');
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>

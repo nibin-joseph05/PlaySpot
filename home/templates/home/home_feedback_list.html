@@ -1,0 +1,191 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback List</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/admin_feedback.css' %}">
+    <style>
+        /* General styles for the feedback list page */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url("{% static 'img/img6.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 1200px;
+            overflow-x: auto;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 1rem;
+            background-color: #fff;
+            color: #333;
+        }
+
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .star {
+            color: #FFD700; /* Gold color for stars */
+            font-size: 1.2rem;
+        }
+
+        .star-grey {
+            color: #ccc; /* Grey color for unfilled stars */
+        }
+
+        .btn {
+            padding: 12px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .btn-back {
+            background-color: #007bff;
+        }
+
+        .btn-back:hover {
+            background-color: #0056b3;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Feedback List</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        
+                        <th>Customer</th>
+                        <th>Turf</th>
+                        <th>Rating</th>
+                        <th>Feedback Type</th>
+                        <th>Comments</th>
+                        <th>Date of Visit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feedback in feedbacks %}
+                        <tr>
+                            <td>{{ feedback.customer.first_name }} {{ feedback.customer.last_name }}</td>
+                            <td>{{ feedback.turf.name }}</td>
+                            <td>
+                                <div class="rating">
+                                    {% with 5 as total_stars %}
+                                        {% for i in "12345"|slice:":total_stars"|make_list %}
+                                            <span class="{% if forloop.counter <= feedback.rating %}fas fa-star{% else %}far fa-star star-grey{% endif %}"></span>
+                                        {% endfor %}
+                                    {% endwith %}
+                                </div>
+                            </td>
+                            <td>{{ feedback.feedback_type }}</td>
+                            <td>{{ feedback.comments }}</td>
+                            <td>{{ feedback.date_of_visit }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7">No feedbacks available.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="button-container">
+                <a href="{% url 'home' %}" class="btn btn-back">Back to Home</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('select_all').addEventListener('change', function () {
+            let checkboxes = document.querySelectorAll('input[name="feedback_ids"]');
+            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        });
+    </script>
+
+</body>
+</html>
