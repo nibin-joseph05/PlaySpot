@@ -5,8 +5,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = 'django-insecure-_70w*3l8r5kart66p_y0i_28k4x4n*@1v=ttwx2evd+x%%r*s#'
-DEBUG = True
-ALLOWED_HOSTS = ['playspot-vb9l.onrender.com']
+DEBUG = False
+ALLOWED_HOSTS = ['yourusername.pythonanywhere.com', '']  # Add your domain here
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -114,3 +115,5 @@ MEDIA_URL = '/media/'
 # Path to the media directory
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Change from 'static/' to 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # Use Whitenoise for static files

@@ -3,8 +3,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-import pandas as pd
-import pandas as pd
+
 
 def load_faq_data(file_path='home/data/faq.xlsx'):
     """
@@ -12,9 +11,9 @@ def load_faq_data(file_path='home/data/faq.xlsx'):
     """
     try:
         data = pd.read_excel(file_path, header=None)
-        print("Loaded data:", data.head())  # Debugging
+        print("Loaded data:", data.head())      
         data = data.dropna(axis=1, how='all')
-        print(f"Columns after cleaning: {data.shape[1]}")  # Debugging
+        print(f"Columns after cleaning: {data.shape[1]}")  
         if data.shape[1] == 5:
             data.columns = ['Unused1', 'Unused2', 'Question', 'Answer', 'Category']
             data = data[['Question', 'Answer']]
@@ -39,15 +38,13 @@ def get_best_match(user_query, faq_data):
     """
     Match the user query with the most relevant FAQ question using cosine similarity.
     """
-    print(f"Received query: {user_query}")  # Debugging: print the user query
+    print(f"Received query: {user_query}")  
     greetings = ["hi", "hello", "hey", "good morning", "good evening"]
     
-    # Check if the user query contains a greeting
     if any(greeting in user_query.lower() for greeting in greetings):
         return "Hello! How can I assist you today?"
 
     try:
-        # Proceed with the normal FAQ matching process
         questions = [faq['Question'] for faq in faq_data]
         vectorizer = TfidfVectorizer()
         tfidf_matrix = vectorizer.fit_transform(questions)
@@ -56,7 +53,6 @@ def get_best_match(user_query, faq_data):
         similarity = cosine_similarity(query_vec, tfidf_matrix)
         best_match_idx = similarity.argmax()
 
-        # If no matching question found with a decent confidence, return a fallback message
         if max(similarity[0]) < 0.3:
             return "I'm sorry, I couldn't find an answer to your question. Please contact support for further assistance."
 
