@@ -71,7 +71,7 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "nibinjoseph2003@gmail.com"
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD", "your-email-password")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD", "jgkr ikqb wvmd xwwk")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Static and Media Files
