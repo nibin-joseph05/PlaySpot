@@ -15,9 +15,9 @@ load_dotenv()
 
 
 # Allowed Hosts
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "playspot-ghbhbxfwavgqfebd.centralus-01.azurewebsites.net").split(",")
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-DEBUG = os.getenv("DEBUG") == "True"
+DEBUG = True  # Set to True for local development
 
 # Application definition
 INSTALLED_APPS = [
