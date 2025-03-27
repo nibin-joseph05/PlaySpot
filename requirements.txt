@@ -1,6 +1,5 @@
 Django==5.0.2
 psycopg2==2.9.10  # PostgreSQL database adapter
-mysqlclient==2.2.6  # Remove if you’re not using MySQL
 gunicorn==23.0.0  # Required for deployment
 whitenoise==6.8.2  # Static file serving in production
 sqlparse==0.4.4  # SQL parsing for Django ORM
