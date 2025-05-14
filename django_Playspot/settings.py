@@ -15,7 +15,7 @@ load_dotenv()
 
 
 # Allowed Hosts
-ALLOWED_HOSTS = ['playspot-plbd.onrender.com', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 DEBUG = True  # Set to True for local development
 
