@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = os.getenv("SECRET_KEY")
-DEBUG = False
+
 from pathlib import Path
 import os
 from dotenv import load_dotenv  # Import dotenv
@@ -15,9 +15,10 @@ load_dotenv()
 
 
 # Allowed Hosts
-ALLOWED_HOSTS = ['playspot-plbd.onrender.com', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
-DEBUG = True  # Set to True for local development
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -67,7 +68,8 @@ WSGI_APPLICATION = 'django_Playspot.wsgi.application'
 
 # Media settings
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join('C:/', 'Users', 'nibin', 'Downloads', 'django_Playspot', 'photos')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -124,6 +126,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Change from 'static/' to 'staticfiles'
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 
