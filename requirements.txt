@@ -1,15 +1,16 @@
-Django==5.0.2
-psycopg2==2.9.10  # PostgreSQL database adapter
-gunicorn==23.0.0  # Required for deployment
-whitenoise==6.8.2  # Static file serving in production
-sqlparse==0.4.4  # SQL parsing for Django ORM
-pillow==11.0.0  # Image handling for uploading turf images
-reportlab==4.2.5  # PDF generation (likely for invoices)
-numpy==2.2.0  # Required for ML models
-pandas==2.2.3  # Data processing (likely for admin analytics)
-scikit-learn==1.6.0  # ML algorithms for FAQ system
-sentence-transformers==3.3.1  # NLP model for FAQ matching
-transformers==4.47.0  # Used for text processing
-torch==2.5.1  # Deep learning framework (if required)
-regex==2024.11.6  # Regular expressions for text processing
-python-dotenv
+Django==5.2
+psycopg2==2.9.10             # PostgreSQL database adapter
+gunicorn==23.0.0             # Required for deployment
+whitenoise==6.8.2            # Static file serving in production
+sqlparse==0.4.4              # SQL parsing for Django ORM
+pillow==11.0.0               # Image handling for uploading turf images
+reportlab==4.2.5             # PDF generation (likely for invoices)
+numpy==2.2.0                 # Required for ML models
+pandas==2.2.3                # Data processing (likely for admin analytics)
+scikit-learn==1.6.0          # ML algorithms for FAQ system
+sentence-transformers==3.3.1 # NLP model for FAQ matching
+transformers==4.47.0         # Required by sentence-transformers
+torch==2.5.1                 # Deep learning framework
+regex==2024.11.6             # Regular expressions for text processing
+python-dotenv==1.0.1         # For managing environment variables
+openpyxl==3.1.2              # Excel file reading for FAQ data
