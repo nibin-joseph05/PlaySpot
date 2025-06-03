@@ -1,4 +1,4 @@
-Django==5.0.2
+Django==5.2
 psycopg2==2.9.10  # PostgreSQL database adapter
 gunicorn==23.0.0  # Required for deployment
 whitenoise==6.8.2  # Static file serving in production
