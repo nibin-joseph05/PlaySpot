@@ -80,14 +80,15 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 # Database configuration
+# Database configuration
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("DB_NAME"),
-        'USER': os.getenv("DB_USER"),
-        'PASSWORD': os.getenv("DB_PASSWORD"),
-        'HOST': os.getenv("DB_HOST"),
-        'PORT': os.getenv("DB_PORT"),
+        'NAME': 'playspot_database',
+        'USER': 'playspot_database_user',
+        'PASSWORD': 'SBP4FMhNT79r6YQG6Mh5jhLCge3lxXju',
+        'HOST': 'dpg-d0vetmm3jp1c73e483mg-a.oregon-postgres.render.com', # <-- THIS IS THE CORRECTED LINE
+        'PORT': '5432',
     }
 }
 
