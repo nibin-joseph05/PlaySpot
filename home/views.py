@@ -56,42 +56,35 @@ def booking(request):
 
 def customer_login(request):
     if request.method == 'POST':
-        email = request.POST.get('email')  # Using get() to avoid KeyError
+        email = request.POST.get('email')
         password = request.POST.get('password')
 
-        if email == 'admin@gmail.com':
-            # Admin login check
-            if password == 'admin':  # Update with a secure method if needed
-                try:
-                    user = User.objects.get(username='admin')
-                    if user.is_staff:
-                        login(request, user)
-                        messages.success(request, "Admin logged in successfully.")
-                        return redirect('admin01')  # Redirect to admin page
-                    else:
-                        messages.error(request, "Admin user is not authorized.")
-                except User.DoesNotExist:
-                    messages.error(request, "Admin account not found.")
-            else:
-                messages.error(request, "Invalid admin credentials.")
+        if email == 'admin@gmail.com' and password == 'admin':
+            try:
+                user = User.objects.get(email='admin@gmail.com')
+                if user.is_staff:
+                    login(request, user)
+                    messages.success(request, "Admin logged in successfully.")
+                    return redirect('admin01')
+                else:
+                    messages.error(request, "Admin user is not authorized.")
+            except User.DoesNotExist:
+                messages.error(request, "Admin account not found.")
         
         else:
             # Customer login check
             try:
                 customer = Customer.objects.get(email=email)
                 if check_password(password, customer.password):
-                    # Store customer_id in the session for later use
                     request.session['customer_id'] = customer.id
                     messages.success(request, "You are now logged in.")
-                    
-                    # Redirect to 'customer' page or the page they tried to access
-                    next_url = request.GET.get('next', 'customer')  # Default to 'customer' page
+                    next_url = request.GET.get('next', 'customer')
                     return redirect(next_url)
                 else:
                     messages.error(request, "Invalid login credentials.")
             except Customer.DoesNotExist:
                 messages.error(request, "Invalid login credentials.")
-    
+
     return render(request, 'home/login.html')
 
 
