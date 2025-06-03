@@ -67,7 +67,7 @@ WSGI_APPLICATION = 'django_Playspot.wsgi.application'
 
 # Media settings
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join('C:/', 'Users', 'nibin', 'Downloads', 'django_Playspot', 'photos')
+# MEDIA_ROOT = os.path.join('C:/', 'Users', 'nibin', 'Downloads', 'django_Playspot', 'photos')
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
